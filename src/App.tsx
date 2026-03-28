@@ -45,8 +45,10 @@ const curriculumData: Record<string, Record<string, { nhanBiet: string; thongHie
 const defaultLevels = () => [
   { tenMucDo: 'Nhận biết', yeuCau: '', color: 'text-emerald-600', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-100', qs: { nlc: '', ds: '', tln: '' } },
   { tenMucDo: 'Thông hiểu', yeuCau: '', color: 'text-amber-600', bgColor: 'bg-amber-50', borderColor: 'border-amber-100', qs: { nlc: '', ds: '', tln: '' } },
-  { tenMucDo: 'Vận dụng', yeuCau: '', color: 'text-rose-600', bgColor: 'bg-rose-50', borderColor: 'border-rose-100', qs: { nlc: '', ds: '', tln: '' } }
+  { tenMucDo: 'Vận dụng', yeuCau: '', color: 'text-rose-600', bgColor: 'bg-rose-50', borderColor: 'border-rose-100', qs: { nlc: '', ds: '', tln: '' } },
+  { tenMucDo: 'Vận dụng cao', yeuCau: '', color: 'text-purple-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-100', qs: { nlc: '', ds: '', tln: '' } }
 ];
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('nhap-lieu');
@@ -221,7 +223,9 @@ export default function App() {
 
     const alloc1 = lrm(12); // TNPA: cau 1-12
     const alloc2 = lrm(4);  // DS: cau 13-16
-    const alloc3 = lrm(6);  // TLN: cau 17-22
+    const alloc3_TH  = lrm(2); // 2 câu TH (câu 17-18)
+const alloc3_VD  = lrm(2); // 2 câu VD (câu 19-20)
+const alloc3_VDC = lrm(2); // 2 câu VDC (câu 21-22)  // TLN: cau 17-22
 
     let nlc = 1, ds = 13, tln = 17;
 
@@ -249,12 +253,11 @@ export default function App() {
         nd.mucDos[0].qs.ds = (cur ? cur + ', ' : '') + `Cau ${ds++}`;
       }
 
-      // TLN (chuan 2025): TH (cau 17,18) => mucDos[1]; VD+VDC (cau 19-22) => mucDos[2]
-      // Khong co NB trong TLN
-      const c3 = alloc3[i];
-      const c3TH  = Math.round(c3 * 2 / 6); // ~2 cau TH
-      const c3VD  = c3 - c3TH;               // phan con lai = VD+VDC (4 cau)
-      // mucDos[0].qs.tln = '' (khong co NB)
+      // TLN (chuan 2025)
+      const c3TH  = alloc3_TH[i];
+      const c3VD  = alloc3_VD[i];
+      const c3VDC = alloc3_VDC[i];
+      
       for (let k = 0; k < c3TH; k++) {
         const cur = nd.mucDos[1].qs.tln;
         nd.mucDos[1].qs.tln = (cur ? cur + ', ' : '') + `Cau ${tln++}`;
@@ -1661,10 +1664,9 @@ function generateExamQuestions(data: any[], countQuestions: (s: string) => numbe
       }
 
       // ── PHẦN III: Trả lời ngắn ─────────────────────────────────────────
-      const nTlnTH     = countQuestions(nd.mucDos[1]?.qs?.tln || '');
-      const nTlnVD_raw = countQuestions(nd.mucDos[2]?.qs?.tln || '');
-      const nTlnVD     = Math.ceil(nTlnVD_raw / 2);
-      const nTlnVDC    = Math.floor(nTlnVD_raw / 2);
+      const nTlnTH = countQuestions(nd.mucDos[1]?.qs?.tln || '');
+      const nTlnVD = countQuestions(nd.mucDos[2]?.qs?.tln || '');
+      const nTlnVDC = countQuestions(nd.mucDos[3]?.qs?.tln || '');
 
       for (let k = 0; k < nTlnTH; k++) {
         const bq = pickQuestion(nd.tenNoiDung, 'tln', 'Thông hiểu');
